@@ -1,0 +1,1539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ShopManager Pro — WooCommerce Style</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsbarcode/3.11.5/JsBarcode.all.min.js"></script>
+<style>
+:root {
+  --bg: #0f0f13;
+  --surface: #17171e;
+  --surface2: #1e1e28;
+  --surface3: #252530;
+  --border: #2a2a38;
+  --accent: #7c5cfc;
+  --accent2: #fc5c7d;
+  --accent3: #5cf9c8;
+  --text: #f0f0f8;
+  --text2: #9898b8;
+  --text3: #5a5a7a;
+  --success: #22c97a;
+  --warning: #f5a623;
+  --danger: #ff4757;
+  --radius: 12px;
+  --radius2: 8px;
+  --shadow: 0 8px 32px rgba(0,0,0,0.4);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+h1,h2,h3,h4{font-family:'Syne',sans-serif}
+
+/* LAYOUT */
+.app{display:flex;min-height:100vh}
+.sidebar{width:240px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100;transition:.3s}
+.sidebar-logo{padding:24px 20px;border-bottom:1px solid var(--border)}
+.sidebar-logo h1{font-size:18px;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sidebar-logo span{font-size:11px;color:var(--text3);font-weight:400;font-family:'DM Sans',sans-serif}
+.nav{padding:12px 0;flex:1;overflow-y:auto}
+.nav-section{padding:8px 20px 4px;font-size:10px;font-weight:700;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;color:var(--text2);cursor:pointer;transition:.2s;font-size:14px;font-weight:500;border-left:3px solid transparent;margin:1px 0}
+.nav-item:hover{color:var(--text);background:var(--surface2)}
+.nav-item.active{color:var(--accent);background:rgba(124,92,252,.1);border-left-color:var(--accent)}
+.nav-item svg{width:18px;height:18px;flex-shrink:0}
+.nav-badge{margin-left:auto;background:var(--accent);color:#fff;font-size:10px;padding:2px 7px;border-radius:20px;font-weight:700}
+
+.main{margin-left:240px;flex:1;padding:0}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.topbar-title{font-size:20px;font-weight:700}
+.topbar-actions{display:flex;align-items:center;gap:12px}
+.content{padding:28px}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:9px 18px;border-radius:var(--radius2);border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;transition:.2s;white-space:nowrap}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:#6a4ae0;transform:translateY(-1px)}
+.btn-success{background:var(--success);color:#fff}
+.btn-success:hover{background:#1aac67}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-danger:hover{background:#e03040}
+.btn-warning{background:var(--warning);color:#000}
+.btn-ghost{background:var(--surface3);color:var(--text2);border:1px solid var(--border)}
+.btn-ghost:hover{color:var(--text);background:var(--surface2)}
+.btn-sm{padding:6px 12px;font-size:12px}
+.btn-icon{padding:8px;border-radius:8px}
+
+/* CARDS */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.card-header{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.card-body{padding:22px}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.stat-card:nth-child(1)::before{background:var(--accent)}
+.stat-card:nth-child(2)::before{background:var(--success)}
+.stat-card:nth-child(3)::before{background:var(--warning)}
+.stat-card:nth-child(4)::before{background:var(--accent2)}
+.stat-label{font-size:12px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.8px}
+.stat-value{font-size:28px;font-weight:800;font-family:'Syne',sans-serif;margin:6px 0 4px}
+.stat-sub{font-size:12px;color:var(--text2)}
+
+/* FORMS */
+.form-group{margin-bottom:16px}
+.form-label{display:block;font-size:13px;font-weight:600;color:var(--text2);margin-bottom:6px}
+.form-control{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius2);padding:10px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;transition:.2s;outline:none}
+.form-control:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,92,252,.15)}
+.form-control::placeholder{color:var(--text3)}
+select.form-control option{background:var(--surface2)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+textarea.form-control{resize:vertical;min-height:80px}
+
+/* TABLE */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{padding:11px 16px;text-align:left;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;border-bottom:1px solid var(--border);background:var(--surface2)}
+td{padding:13px 16px;font-size:14px;border-bottom:1px solid var(--border);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(124,92,252,.04)}
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
+.badge-success{background:rgba(34,201,122,.15);color:var(--success)}
+.badge-warning{background:rgba(245,166,35,.15);color:var(--warning)}
+.badge-danger{background:rgba(255,71,87,.15);color:var(--danger)}
+.badge-info{background:rgba(124,92,252,.15);color:var(--accent)}
+.badge-gray{background:var(--surface3);color:var(--text2)}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:16px;width:100%;max-width:600px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow);animation:modalIn .2s ease}
+.modal-lg{max-width:800px}
+.modal-xl{max-width:1000px}
+@keyframes modalIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.modal-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.modal-header h3{font-size:18px;font-weight:700}
+.modal-body{padding:24px}
+.modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;gap:12px;justify-content:flex-end}
+.close-btn{background:none;border:none;color:var(--text2);cursor:pointer;padding:4px;border-radius:6px;display:flex}
+.close-btn:hover{color:var(--text);background:var(--surface3)}
+
+/* SEARCH */
+.search-bar{position:relative}
+.search-bar svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--text3)}
+.search-bar input{padding-left:38px}
+.search-bar input{width:280px}
+
+/* PRODUCT IMAGE */
+.product-thumb{width:40px;height:40px;border-radius:8px;background:var(--surface3);display:flex;align-items:center;justify-content:center;font-size:18px;overflow:hidden;flex-shrink:0}
+.product-info{display:flex;align-items:center;gap:12px}
+.product-name{font-weight:600;font-size:14px}
+.product-sku{font-size:12px;color:var(--text3)}
+
+/* INVOICE PREVIEW */
+.invoice-preview{background:#fff;color:#111;padding:40px;border-radius:12px;font-family:'DM Sans',sans-serif}
+.invoice-preview *{color:#111 !important}
+.inv-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:32px}
+.inv-logo{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:#7c5cfc !important}
+.inv-title{text-align:right}
+.inv-title h2{font-size:28px;font-weight:800;color:#7c5cfc !important}
+.inv-title p{font-size:12px;color:#888 !important}
+.inv-parties{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-bottom:28px}
+.inv-party h4{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#999 !important;margin-bottom:8px}
+.inv-party p{font-size:14px;line-height:1.7}
+.inv-meta{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;background:#f8f8ff;padding:16px;border-radius:8px;margin-bottom:28px}
+.inv-meta-item label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#999 !important}
+.inv-meta-item p{font-size:14px;font-weight:600;margin-top:2px}
+.inv-table{width:100%;border-collapse:collapse;margin-bottom:24px}
+.inv-table th{background:#7c5cfc;color:#fff !important;padding:10px 14px;text-align:left;font-size:12px;font-weight:700}
+.inv-table td{padding:10px 14px;border-bottom:1px solid #eee;font-size:13px}
+.inv-table tr:last-child td{border-bottom:none}
+.inv-totals{display:flex;justify-content:flex-end}
+.inv-totals-box{width:260px}
+.inv-total-row{display:flex;justify-content:space-between;padding:6px 0;font-size:14px;border-bottom:1px solid #eee}
+.inv-total-row.grand{font-weight:800;font-size:16px;border-bottom:none;padding-top:12px;color:#7c5cfc !important}
+.inv-barcode{text-align:center;margin-top:28px;padding-top:20px;border-top:1px solid #eee}
+.inv-barcode p{font-size:11px;color:#999 !important;margin-top:6px}
+.inv-footer{margin-top:24px;padding-top:16px;border-top:1px solid #eee;text-align:center;font-size:12px;color:#888 !important}
+
+/* INVENTORY */
+.stock-bar{background:var(--surface3);border-radius:20px;height:6px;width:120px;overflow:hidden}
+.stock-fill{height:100%;border-radius:20px;transition:.3s}
+
+/* PAGE */
+.page{display:none}
+.page.active{display:block}
+
+/* ALERT */
+.alert{padding:12px 16px;border-radius:var(--radius2);margin-bottom:16px;font-size:14px;display:flex;align-items:center;gap:10px}
+.alert-success{background:rgba(34,201,122,.15);color:var(--success);border:1px solid rgba(34,201,122,.3)}
+.alert-danger{background:rgba(255,71,87,.15);color:var(--danger);border:1px solid rgba(255,71,87,.3)}
+.alert-warning{background:rgba(245,166,35,.15);color:var(--warning);border:1px solid rgba(245,166,35,.3)}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--surface)}
+::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--accent)}
+
+/* PRINT */
+@media print{
+  .sidebar,.topbar,.modal-overlay,.no-print{display:none!important}
+  .main{margin:0!important}
+  .invoice-preview{box-shadow:none!important}
+  body{background:#fff}
+}
+
+/* TABS */
+.tabs{display:flex;gap:2px;background:var(--surface2);padding:4px;border-radius:10px;margin-bottom:20px}
+.tab{padding:8px 16px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text2);transition:.2s}
+.tab.active{background:var(--accent);color:#fff}
+.tab-content{display:none}
+.tab-content.active{display:block}
+
+/* EMPTY */
+.empty-state{text-align:center;padding:60px 20px;color:var(--text3)}
+.empty-state svg{width:48px;height:48px;margin:0 auto 16px;display:block;opacity:.4}
+.empty-state h3{font-size:16px;font-weight:700;margin-bottom:6px;color:var(--text2)}
+.empty-state p{font-size:14px}
+
+/* RESPONSIVE HELPERS */
+.flex{display:flex;align-items:center;gap:12px}
+.flex-between{display:flex;align-items:center;justify-content:space-between}
+.mt-4{margin-top:16px}
+.mb-4{margin-bottom:16px}
+.text-right{text-align:right}
+.text-success{color:var(--success)}
+.text-danger{color:var(--danger)}
+.text-warning{color:var(--warning)}
+.text-muted{color:var(--text3)}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <h1>ShopManager Pro</h1>
+    <span>WooCommerce Style</span>
+  </div>
+  <nav class="nav">
+    <div class="nav-section">Main</div>
+    <div class="nav-item active" onclick="navigate('dashboard')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      Dashboard
+    </div>
+    <div class="nav-section">Catalog</div>
+    <div class="nav-item" onclick="navigate('products')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+      Products
+      <span class="nav-badge" id="productCount">0</span>
+    </div>
+    <div class="nav-item" onclick="navigate('categories')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+      Categories
+    </div>
+    <div class="nav-section">Sales</div>
+    <div class="nav-item" onclick="navigate('orders')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
+      Orders
+      <span class="nav-badge" id="orderCount">0</span>
+    </div>
+    <div class="nav-item" onclick="navigate('invoice')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+      New Invoice
+    </div>
+    <div class="nav-section">Inventory</div>
+    <div class="nav-item" onclick="navigate('inventory')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 17l10 5 10-5M2 12l10 5 10-5M12 2L2 7l10 5 10-5z"/></svg>
+      Inventory
+    </div>
+    <div class="nav-item" onclick="navigate('suppliers')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+      Suppliers
+    </div>
+    <div class="nav-section">Reports</div>
+    <div class="nav-item" onclick="navigate('reports')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg>
+      Reports
+    </div>
+    <div class="nav-section">Settings</div>
+    <div class="nav-item" onclick="navigate('settings')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M12 2v2M12 20v2M2 12h2M20 12h2M19.07 19.07l-1.41-1.41M4.93 19.07l1.41-1.41"/></svg>
+      Settings
+    </div>
+  </nav>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-title" id="pageTitle">Dashboard</div>
+  <div class="topbar-actions">
+    <div class="search-bar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" class="form-control" placeholder="Search..." id="globalSearch" oninput="globalSearchFn()">
+    </div>
+    <button class="btn btn-primary" onclick="quickAdd()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Quick Add
+    </button>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- DASHBOARD -->
+<div class="page active" id="page-dashboard">
+  <div class="stat-grid">
+    <div class="stat-card">
+      <div class="stat-label">Total Products</div>
+      <div class="stat-value" id="stat-products">0</div>
+      <div class="stat-sub">Items in catalog</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Total Revenue</div>
+      <div class="stat-value" id="stat-revenue">$0</div>
+      <div class="stat-sub">From all invoices</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Total Orders</div>
+      <div class="stat-value" id="stat-orders">0</div>
+      <div class="stat-sub">Invoices generated</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Low Stock</div>
+      <div class="stat-value text-warning" id="stat-lowstock">0</div>
+      <div class="stat-sub">Items need restock</div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+    <div class="card">
+      <div class="card-header"><span style="font-weight:700">Recent Orders</span><button class="btn btn-ghost btn-sm" onclick="navigate('orders')">View All</button></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Invoice</th><th>Customer</th><th>Total</th><th>Status</th></tr></thead>
+          <tbody id="dashRecentOrders"><tr><td colspan="4" class="text-muted" style="text-align:center;padding:20px">No orders yet</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span style="font-weight:700">Low Stock Alert</span><button class="btn btn-ghost btn-sm" onclick="navigate('inventory')">Manage</button></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Product</th><th>SKU</th><th>Stock</th><th>Min</th></tr></thead>
+          <tbody id="dashLowStock"><tr><td colspan="4" class="text-muted" style="text-align:center;padding:20px">All stocked up!</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PRODUCTS -->
+<div class="page" id="page-products">
+  <div class="flex-between mb-4">
+    <div class="flex">
+      <select class="form-control" style="width:160px" id="catFilter" onchange="renderProducts()">
+        <option value="">All Categories</option>
+      </select>
+      <select class="form-control" style="width:140px" id="stockFilter" onchange="renderProducts()">
+        <option value="">All Stock</option>
+        <option value="instock">In Stock</option>
+        <option value="lowstock">Low Stock</option>
+        <option value="outofstock">Out of Stock</option>
+      </select>
+    </div>
+    <button class="btn btn-primary" onclick="openProductModal()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Add Product
+    </button>
+  </div>
+  <div class="card">
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Product</th><th>SKU</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="productTable"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- CATEGORIES -->
+<div class="page" id="page-categories">
+  <div class="flex-between mb-4">
+    <div></div>
+    <button class="btn btn-primary" onclick="openCatModal()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Add Category
+    </button>
+  </div>
+  <div class="card">
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Category Name</th><th>Description</th><th>Products</th><th>Actions</th></tr></thead>
+        <tbody id="categoryTable"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ORDERS -->
+<div class="page" id="page-orders">
+  <div class="flex-between mb-4">
+    <div class="flex">
+      <select class="form-control" style="width:160px" id="orderStatusFilter" onchange="renderOrders()">
+        <option value="">All Status</option>
+        <option value="Pending">Pending</option>
+        <option value="Processing">Processing</option>
+        <option value="Completed">Completed</option>
+        <option value="Cancelled">Cancelled</option>
+      </select>
+    </div>
+    <button class="btn btn-primary" onclick="navigate('invoice')">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      New Invoice
+    </button>
+  </div>
+  <div class="card">
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Invoice #</th><th>Date</th><th>Customer</th><th>Items</th><th>Total</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="orderTable"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- INVOICE BUILDER -->
+<div class="page" id="page-invoice">
+  <div style="display:grid;grid-template-columns:1fr 400px;gap:24px">
+    <div>
+      <div class="card mb-4">
+        <div class="card-header"><span style="font-weight:700">Customer Information</span></div>
+        <div class="card-body">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Customer Name *</label>
+              <input type="text" class="form-control" id="inv-customer" placeholder="Full name">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email</label>
+              <input type="email" class="form-control" id="inv-email" placeholder="email@example.com">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Phone</label>
+              <input type="text" class="form-control" id="inv-phone" placeholder="+1 234 567 8900">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Invoice Date</label>
+              <input type="date" class="form-control" id="inv-date">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Billing Address</label>
+            <textarea class="form-control" id="inv-address" placeholder="Street, City, State, ZIP"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="card mb-4">
+        <div class="card-header">
+          <span style="font-weight:700">Order Items</span>
+          <button class="btn btn-ghost btn-sm" onclick="addInvoiceItem()">+ Add Item</button>
+        </div>
+        <div class="card-body">
+          <table style="width:100%;border-collapse:collapse">
+            <thead>
+              <tr style="border-bottom:1px solid var(--border)">
+                <th style="padding:8px;text-align:left;font-size:12px;color:var(--text3)">Product</th>
+                <th style="padding:8px;text-align:center;font-size:12px;color:var(--text3);width:80px">Qty</th>
+                <th style="padding:8px;text-align:right;font-size:12px;color:var(--text3);width:100px">Price</th>
+                <th style="padding:8px;text-align:right;font-size:12px;color:var(--text3);width:100px">Subtotal</th>
+                <th style="width:40px"></th>
+              </tr>
+            </thead>
+            <tbody id="invoiceItems"></tbody>
+          </table>
+          <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
+            <div style="display:flex;justify-content:flex-end">
+              <div style="width:260px">
+                <div style="display:flex;justify-content:space-between;padding:6px 0;font-size:14px">
+                  <span class="text-muted">Subtotal</span><span id="inv-subtotal">$0.00</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;padding:6px 0;font-size:14px;align-items:center">
+                  <span class="text-muted">Discount (%)</span>
+                  <input type="number" class="form-control" id="inv-discount" value="0" min="0" max="100" style="width:70px;text-align:right" onchange="calcTotals()">
+                </div>
+                <div style="display:flex;justify-content:space-between;padding:6px 0;font-size:14px;align-items:center">
+                  <span class="text-muted">Tax (%)</span>
+                  <input type="number" class="form-control" id="inv-tax" value="0" min="0" max="100" style="width:70px;text-align:right" onchange="calcTotals()">
+                </div>
+                <div style="display:flex;justify-content:space-between;padding:10px 0 0;font-size:18px;font-weight:800;font-family:Syne;border-top:1px solid var(--border);margin-top:6px">
+                  <span>Total</span><span id="inv-total" style="color:var(--accent)">$0.00</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Payment Method</label>
+              <select class="form-control" id="inv-payment">
+                <option>Cash</option><option>Credit Card</option><option>Bank Transfer</option><option>Online Payment</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Status</label>
+              <select class="form-control" id="inv-status">
+                <option>Pending</option><option>Processing</option><option>Completed</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Notes</label>
+            <textarea class="form-control" id="inv-notes" placeholder="Additional notes for customer..."></textarea>
+          </div>
+          <div class="flex" style="gap:12px;margin-top:4px">
+            <button class="btn btn-primary" onclick="generateInvoice()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10,9 9,9 8,9"/></svg>
+              Generate Invoice
+            </button>
+            <button class="btn btn-ghost" onclick="clearInvoice()">Clear</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- INVOICE SUMMARY SIDE -->
+    <div>
+      <div class="card" style="position:sticky;top:80px">
+        <div class="card-header"><span style="font-weight:700">Invoice Summary</span></div>
+        <div class="card-body">
+          <div id="invSummaryItems" style="font-size:13px;color:var(--text2);margin-bottom:16px">No items added yet.</div>
+          <div style="background:var(--surface2);border-radius:8px;padding:14px;font-size:14px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span class="text-muted">Items:</span><span id="sumItems">0</span></div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span class="text-muted">Subtotal:</span><span id="sumSub">$0.00</span></div>
+            <div style="display:flex;justify-content:space-between;font-weight:700;font-size:16px;padding-top:8px;border-top:1px solid var(--border);margin-top:8px;color:var(--accent)"><span>Total:</span><span id="sumTotal">$0.00</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- INVENTORY -->
+<div class="page" id="page-inventory">
+  <div class="flex-between mb-4">
+    <div class="flex">
+      <select class="form-control" style="width:160px" id="invStockFilter" onchange="renderInventory()">
+        <option value="">All Stock</option>
+        <option value="instock">In Stock</option>
+        <option value="lowstock">Low Stock</option>
+        <option value="outofstock">Out of Stock</option>
+      </select>
+    </div>
+    <button class="btn btn-warning" onclick="openRestockModal()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1,4 1,10 7,10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+      Bulk Restock
+    </button>
+  </div>
+  <div class="card">
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Product</th><th>SKU</th><th>Current Stock</th><th>Min Stock</th><th>Stock Level</th><th>Last Updated</th><th>Action</th></tr></thead>
+        <tbody id="inventoryTable"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- SUPPLIERS -->
+<div class="page" id="page-suppliers">
+  <div class="flex-between mb-4">
+    <div></div>
+    <button class="btn btn-primary" onclick="openSupplierModal()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Add Supplier
+    </button>
+  </div>
+  <div class="card">
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Supplier Name</th><th>Contact</th><th>Email</th><th>Phone</th><th>Products</th><th>Actions</th></tr></thead>
+        <tbody id="supplierTable"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- REPORTS -->
+<div class="page" id="page-reports">
+  <div class="stat-grid">
+    <div class="stat-card">
+      <div class="stat-label">This Month Sales</div>
+      <div class="stat-value text-success" id="rpt-monthly">$0</div>
+      <div class="stat-sub" id="rpt-monthly-orders">0 orders</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Top Product</div>
+      <div class="stat-value" style="font-size:16px" id="rpt-top">—</div>
+      <div class="stat-sub">By revenue</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Avg Order Value</div>
+      <div class="stat-value" id="rpt-avg">$0</div>
+      <div class="stat-sub">Per invoice</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Inventory Value</div>
+      <div class="stat-value" id="rpt-invvalue">$0</div>
+      <div class="stat-sub">Stock × Price</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header"><span style="font-weight:700">Sales by Product</span></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Product</th><th>Units Sold</th><th>Revenue</th><th>% of Total</th></tr></thead>
+        <tbody id="salesByProduct"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS -->
+<div class="page" id="page-settings">
+  <div class="card">
+    <div class="card-header"><span style="font-weight:700">Store Settings</span></div>
+    <div class="card-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Store Name</label>
+          <input type="text" class="form-control" id="set-storename" placeholder="My Awesome Store">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Currency Symbol</label>
+          <input type="text" class="form-control" id="set-currency" placeholder="$" maxlength="3">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Store Email</label>
+          <input type="email" class="form-control" id="set-email" placeholder="store@example.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Store Phone</label>
+          <input type="text" class="form-control" id="set-phone" placeholder="+1 234 567 8900">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Store Address</label>
+        <textarea class="form-control" id="set-address" placeholder="Full store address..."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Invoice Footer Note</label>
+        <input type="text" class="form-control" id="set-footer" placeholder="Thank you for your business!">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Default Tax (%)</label>
+          <input type="number" class="form-control" id="set-tax" value="0" min="0" max="100">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Low Stock Threshold</label>
+          <input type="number" class="form-control" id="set-lowstock" value="5" min="1">
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
+      <div id="settings-msg" style="margin-top:12px"></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end content -->
+</main><!-- end main -->
+</div><!-- end app -->
+
+<!-- ===== MODALS ===== -->
+
+<!-- PRODUCT MODAL -->
+<div class="modal-overlay" id="productModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="productModalTitle">Add Product</h3>
+      <button class="close-btn" onclick="closeModal('productModal')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="productId">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Product Name *</label>
+          <input type="text" class="form-control" id="p-name" placeholder="Product name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">SKU *</label>
+          <input type="text" class="form-control" id="p-sku" placeholder="e.g. PRD-001">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <select class="form-control" id="p-cat">
+            <option value="">— Select —</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Product Emoji / Icon</label>
+          <input type="text" class="form-control" id="p-emoji" placeholder="📦" maxlength="4">
+        </div>
+      </div>
+      <div class="form-row-3">
+        <div class="form-group">
+          <label class="form-label">Regular Price *</label>
+          <input type="number" class="form-control" id="p-price" placeholder="0.00" min="0" step="0.01">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Cost Price</label>
+          <input type="number" class="form-control" id="p-cost" placeholder="0.00" min="0" step="0.01">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Sale Price</label>
+          <input type="number" class="form-control" id="p-sale" placeholder="0.00" min="0" step="0.01">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Stock Quantity *</label>
+          <input type="number" class="form-control" id="p-stock" placeholder="0" min="0">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Min Stock Level</label>
+          <input type="number" class="form-control" id="p-minstock" placeholder="5" min="0">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Description</label>
+        <textarea class="form-control" id="p-desc" placeholder="Product description..."></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Unit</label>
+          <select class="form-control" id="p-unit">
+            <option>pcs</option><option>kg</option><option>g</option><option>liter</option><option>box</option><option>pack</option><option>set</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Status</label>
+          <select class="form-control" id="p-status">
+            <option value="active">Active</option><option value="inactive">Inactive</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('productModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveProduct()">Save Product</button>
+    </div>
+  </div>
+</div>
+
+<!-- CATEGORY MODAL -->
+<div class="modal-overlay" id="categoryModal">
+  <div class="modal" style="max-width:440px">
+    <div class="modal-header">
+      <h3 id="catModalTitle">Add Category</h3>
+      <button class="close-btn" onclick="closeModal('categoryModal')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="catId">
+      <div class="form-group">
+        <label class="form-label">Category Name *</label>
+        <input type="text" class="form-control" id="cat-name" placeholder="Category name">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Description</label>
+        <textarea class="form-control" id="cat-desc" placeholder="Category description..."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Color</label>
+        <input type="color" class="form-control" id="cat-color" value="#7c5cfc" style="height:40px;cursor:pointer">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('categoryModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveCat()">Save Category</button>
+    </div>
+  </div>
+</div>
+
+<!-- INVOICE PRINT MODAL -->
+<div class="modal-overlay" id="invoicePrintModal">
+  <div class="modal modal-xl">
+    <div class="modal-header">
+      <h3>Invoice Preview</h3>
+      <div class="flex">
+        <button class="btn btn-primary btn-sm no-print" onclick="window.print()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 6,2 18,2 18,9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          Print
+        </button>
+        <button class="close-btn" onclick="closeModal('invoicePrintModal')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div id="invoicePrintContent"></div>
+    </div>
+  </div>
+</div>
+
+<!-- RESTOCK MODAL -->
+<div class="modal-overlay" id="restockModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Restock Product</h3>
+      <button class="close-btn" onclick="closeModal('restockModal')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Select Product</label>
+        <select class="form-control" id="restock-product" onchange="showRestockCurrent()">
+          <option value="">— Choose Product —</option>
+        </select>
+      </div>
+      <div id="restock-current" style="background:var(--surface2);padding:12px;border-radius:8px;margin-bottom:16px;font-size:14px;display:none">
+        Current Stock: <strong id="restock-cur-val">—</strong>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Add Quantity</label>
+          <input type="number" class="form-control" id="restock-qty" placeholder="0" min="1">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Supplier (optional)</label>
+          <select class="form-control" id="restock-supplier">
+            <option value="">— None —</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Note</label>
+        <input type="text" class="form-control" id="restock-note" placeholder="Restock reason or reference...">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('restockModal')">Cancel</button>
+      <button class="btn btn-warning" onclick="doRestock()">Restock</button>
+    </div>
+  </div>
+</div>
+
+<!-- SUPPLIER MODAL -->
+<div class="modal-overlay" id="supplierModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="supModalTitle">Add Supplier</h3>
+      <button class="close-btn" onclick="closeModal('supplierModal')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="supId">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Supplier Name *</label>
+          <input type="text" class="form-control" id="sup-name" placeholder="Supplier name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Contact Person</label>
+          <input type="text" class="form-control" id="sup-contact" placeholder="Contact name">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-control" id="sup-email" placeholder="email@example.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Phone</label>
+          <input type="text" class="form-control" id="sup-phone" placeholder="+1 234 567 8900">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Address</label>
+        <textarea class="form-control" id="sup-address" placeholder="Supplier address..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('supplierModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveSupplier()">Save Supplier</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast" style="position:fixed;bottom:24px;right:24px;z-index:9999;pointer-events:none"></div>
+
+<script>
+// ========== STATE ==========
+let state = {
+  products: [],
+  categories: [],
+  orders: [],
+  suppliers: [],
+  settings: {
+    storeName: 'ShopManager Pro',
+    currency: '$',
+    email: 'shop@example.com',
+    phone: '+1 234 567 890',
+    address: '123 Main Street, City, State 12345',
+    footer: 'Thank you for your business!',
+    tax: 0,
+    lowstock: 5
+  },
+  invoiceItems: [],
+  nextOrderId: 1001,
+  nextProductId: 1,
+  nextCatId: 1,
+  nextSupId: 1
+};
+
+function loadState(){
+  const s = localStorage.getItem('shopmanager');
+  if(s){ try{ state = JSON.parse(s); }catch(e){} }
+}
+function saveState(){
+  localStorage.setItem('shopmanager', JSON.stringify(state));
+}
+
+// ========== NAV ==========
+function navigate(page){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  const titles = {
+    dashboard:'Dashboard',products:'Products',categories:'Categories',
+    orders:'Orders',invoice:'New Invoice',inventory:'Inventory',
+    suppliers:'Suppliers',reports:'Reports',settings:'Settings'
+  };
+  document.getElementById('pageTitle').textContent = titles[page]||page;
+  // activate nav item
+  document.querySelectorAll('.nav-item').forEach(n=>{
+    if(n.getAttribute('onclick')&&n.getAttribute('onclick').includes("'"+page+"'")){
+      n.classList.add('active');
+    }
+  });
+  if(page==='dashboard') renderDashboard();
+  if(page==='products') renderProducts();
+  if(page==='categories') renderCategories();
+  if(page==='orders') renderOrders();
+  if(page==='invoice') initInvoice();
+  if(page==='inventory') renderInventory();
+  if(page==='suppliers') renderSuppliers();
+  if(page==='reports') renderReports();
+  if(page==='settings') loadSettings();
+}
+
+// ========== TOAST ==========
+function toast(msg, type='success'){
+  const t = document.getElementById('toast');
+  const colors = {success:'var(--success)',danger:'var(--danger)',warning:'var(--warning)',info:'var(--accent)'};
+  const el = document.createElement('div');
+  el.style.cssText = `background:var(--surface);border:1px solid ${colors[type]||colors.success};color:var(--text);padding:12px 20px;border-radius:10px;margin-top:8px;font-size:14px;font-weight:500;box-shadow:var(--shadow);transition:.3s;opacity:0;transform:translateY(10px)`;
+  el.textContent = msg;
+  t.appendChild(el);
+  setTimeout(()=>{el.style.opacity='1';el.style.transform='translateY(0)'},10);
+  setTimeout(()=>{el.style.opacity='0';setTimeout(()=>el.remove(),300)},3000);
+}
+
+// ========== MODAL ==========
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(m=>{
+  m.addEventListener('click',e=>{ if(e.target===m) m.classList.remove('open'); });
+});
+
+// ========== PRODUCTS ==========
+function openProductModal(id=null){
+  document.getElementById('productModalTitle').textContent = id ? 'Edit Product' : 'Add Product';
+  document.getElementById('productId').value = id||'';
+  // populate category
+  const sel = document.getElementById('p-cat');
+  sel.innerHTML = '<option value="">— Select —</option>';
+  state.categories.forEach(c=>{ sel.innerHTML += `<option value="${c.id}">${c.name}</option>`; });
+  if(id){
+    const p = state.products.find(x=>x.id==id);
+    if(p){
+      document.getElementById('p-name').value=p.name;
+      document.getElementById('p-sku').value=p.sku;
+      document.getElementById('p-cat').value=p.catId||'';
+      document.getElementById('p-emoji').value=p.emoji||'📦';
+      document.getElementById('p-price').value=p.price;
+      document.getElementById('p-cost').value=p.cost||'';
+      document.getElementById('p-sale').value=p.sale||'';
+      document.getElementById('p-stock').value=p.stock;
+      document.getElementById('p-minstock').value=p.minStock||5;
+      document.getElementById('p-desc').value=p.desc||'';
+      document.getElementById('p-unit').value=p.unit||'pcs';
+      document.getElementById('p-status').value=p.status||'active';
+    }
+  } else {
+    ['p-name','p-sku','p-price','p-cost','p-sale','p-desc'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('p-stock').value='0';
+    document.getElementById('p-minstock').value='5';
+    document.getElementById('p-emoji').value='📦';
+    document.getElementById('p-unit').value='pcs';
+    document.getElementById('p-status').value='active';
+  }
+  openModal('productModal');
+}
+
+function saveProduct(){
+  const name=document.getElementById('p-name').value.trim();
+  const sku=document.getElementById('p-sku').value.trim();
+  const price=parseFloat(document.getElementById('p-price').value)||0;
+  const stock=parseInt(document.getElementById('p-stock').value)||0;
+  if(!name){toast('Product name required','danger');return;}
+  if(!sku){toast('SKU required','danger');return;}
+  if(price<=0){toast('Price must be > 0','danger');return;}
+
+  const id = document.getElementById('productId').value;
+  const prod = {
+    id: id || (state.nextProductId++),
+    name, sku,
+    catId: document.getElementById('p-cat').value,
+    emoji: document.getElementById('p-emoji').value||'📦',
+    price,
+    cost: parseFloat(document.getElementById('p-cost').value)||0,
+    sale: parseFloat(document.getElementById('p-sale').value)||0,
+    stock,
+    minStock: parseInt(document.getElementById('p-minstock').value)||5,
+    desc: document.getElementById('p-desc').value,
+    unit: document.getElementById('p-unit').value,
+    status: document.getElementById('p-status').value,
+    updatedAt: new Date().toLocaleDateString()
+  };
+  if(id){
+    const idx = state.products.findIndex(x=>x.id==id);
+    if(idx>-1) state.products[idx]=prod;
+    toast('Product updated!');
+  } else {
+    state.products.push(prod);
+    toast('Product added!');
+  }
+  saveState();
+  closeModal('productModal');
+  renderProducts();
+  updateBadges();
+}
+
+function deleteProduct(id){
+  if(!confirm('Delete this product?'))return;
+  state.products = state.products.filter(p=>p.id!=id);
+  saveState();
+  renderProducts();
+  updateBadges();
+  toast('Product deleted','warning');
+}
+
+function renderProducts(){
+  const catF = document.getElementById('catFilter').value;
+  const stockF = document.getElementById('stockFilter').value;
+  // refresh cat filter options
+  const cf = document.getElementById('catFilter');
+  const prev = cf.value;
+  cf.innerHTML = '<option value="">All Categories</option>';
+  state.categories.forEach(c=>{ cf.innerHTML += `<option value="${c.id}">${c.name}</option>`; });
+  cf.value=prev;
+
+  let prods = [...state.products];
+  if(catF) prods = prods.filter(p=>p.catId==catF);
+  if(stockF==='instock') prods=prods.filter(p=>p.stock>p.minStock);
+  else if(stockF==='lowstock') prods=prods.filter(p=>p.stock>0&&p.stock<=p.minStock);
+  else if(stockF==='outofstock') prods=prods.filter(p=>p.stock<=0);
+  const q = document.getElementById('globalSearch').value.toLowerCase();
+  if(q) prods=prods.filter(p=>p.name.toLowerCase().includes(q)||p.sku.toLowerCase().includes(q));
+
+  const tbody = document.getElementById('productTable');
+  if(!prods.length){
+    tbody.innerHTML=`<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text3)">No products found. <a href="#" onclick="openProductModal()" style="color:var(--accent)">Add one!</a></td></tr>`;
+    return;
+  }
+  const cur = state.settings.currency;
+  tbody.innerHTML = prods.map(p=>{
+    const cat = state.categories.find(c=>c.id==p.catId);
+    const stockStatus = p.stock<=0?'outofstock':p.stock<=p.minStock?'lowstock':'instock';
+    const badges = {instock:'<span class="badge badge-success">In Stock</span>',lowstock:'<span class="badge badge-warning">Low Stock</span>',outofstock:'<span class="badge badge-danger">Out of Stock</span>'};
+    const price = p.sale>0 ? `<span style="text-decoration:line-through;color:var(--text3)">${cur}${p.price.toFixed(2)}</span> <span style="color:var(--accent2)">${cur}${p.sale.toFixed(2)}</span>` : `${cur}${p.price.toFixed(2)}`;
+    return `<tr>
+      <td><div class="product-info">
+        <div class="product-thumb">${p.emoji||'📦'}</div>
+        <div><div class="product-name">${p.name}</div><div class="product-sku">${p.desc?p.desc.substring(0,40)+'...':''}</div></div>
+      </div></td>
+      <td><code style="background:var(--surface2);padding:2px 8px;border-radius:4px;font-size:12px">${p.sku}</code></td>
+      <td>${cat?`<span style="background:${cat.color||'#7c5cfc'}22;color:${cat.color||'#7c5cfc'};padding:2px 10px;border-radius:20px;font-size:12px;font-weight:600">${cat.name}</span>`:'<span class="text-muted">—</span>'}</td>
+      <td>${price}</td>
+      <td><span style="font-weight:600">${p.stock}</span> <span class="text-muted" style="font-size:12px">${p.unit||'pcs'}</span></td>
+      <td>${badges[stockStatus]}</td>
+      <td><div class="flex" style="gap:6px">
+        <button class="btn btn-ghost btn-sm btn-icon" onclick="openProductModal(${p.id})" title="Edit">✏️</button>
+        <button class="btn btn-ghost btn-sm btn-icon" onclick="deleteProduct(${p.id})" title="Delete">🗑️</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+// ========== CATEGORIES ==========
+function openCatModal(id=null){
+  document.getElementById('catModalTitle').textContent = id ? 'Edit Category' : 'Add Category';
+  document.getElementById('catId').value=id||'';
+  if(id){
+    const c=state.categories.find(x=>x.id==id);
+    if(c){ document.getElementById('cat-name').value=c.name; document.getElementById('cat-desc').value=c.desc||''; document.getElementById('cat-color').value=c.color||'#7c5cfc'; }
+  } else {
+    document.getElementById('cat-name').value=''; document.getElementById('cat-desc').value=''; document.getElementById('cat-color').value='#7c5cfc';
+  }
+  openModal('categoryModal');
+}
+function saveCat(){
+  const name=document.getElementById('cat-name').value.trim();
+  if(!name){toast('Category name required','danger');return;}
+  const id=document.getElementById('catId').value;
+  const cat={id:id||(state.nextCatId++),name,desc:document.getElementById('cat-desc').value,color:document.getElementById('cat-color').value};
+  if(id){ const i=state.categories.findIndex(x=>x.id==id); if(i>-1)state.categories[i]=cat; toast('Category updated!'); }
+  else { state.categories.push(cat); toast('Category added!'); }
+  saveState(); closeModal('categoryModal'); renderCategories();
+}
+function deleteCat(id){
+  if(!confirm('Delete this category?'))return;
+  state.categories=state.categories.filter(c=>c.id!=id);
+  saveState(); renderCategories(); toast('Category deleted','warning');
+}
+function renderCategories(){
+  const tbody=document.getElementById('categoryTable');
+  if(!state.categories.length){
+    tbody.innerHTML=`<tr><td colspan="4" style="text-align:center;padding:40px;color:var(--text3)">No categories. <a href="#" onclick="openCatModal()" style="color:var(--accent)">Add one!</a></td></tr>`;
+    return;
+  }
+  tbody.innerHTML=state.categories.map(c=>{
+    const count=state.products.filter(p=>p.catId==c.id).length;
+    return `<tr><td><span style="background:${c.color||'#7c5cfc'}22;color:${c.color||'#7c5cfc'};padding:3px 12px;border-radius:20px;font-size:13px;font-weight:700">${c.name}</span></td>
+    <td>${c.desc||'<span class="text-muted">—</span>'}</td>
+    <td>${count}</td>
+    <td><div class="flex" style="gap:6px"><button class="btn btn-ghost btn-sm btn-icon" onclick="openCatModal(${c.id})">✏️</button><button class="btn btn-ghost btn-sm btn-icon" onclick="deleteCat(${c.id})">🗑️</button></div></td></tr>`;
+  }).join('');
+}
+
+// ========== INVOICE ==========
+function initInvoice(){
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('inv-date').value=today;
+  document.getElementById('inv-tax').value=state.settings.tax||0;
+  if(!state.invoiceItems.length) addInvoiceItem();
+  renderInvoiceItems();
+}
+function addInvoiceItem(){
+  state.invoiceItems.push({productId:'',qty:1,price:0,name:''});
+  renderInvoiceItems();
+}
+function removeInvoiceItem(i){
+  state.invoiceItems.splice(i,1);
+  if(!state.invoiceItems.length) state.invoiceItems.push({productId:'',qty:1,price:0,name:''});
+  renderInvoiceItems();
+}
+function renderInvoiceItems(){
+  const tbody=document.getElementById('invoiceItems');
+  const cur=state.settings.currency;
+  tbody.innerHTML=state.invoiceItems.map((item,i)=>`
+    <tr style="border-bottom:1px solid var(--border)">
+      <td style="padding:8px">
+        <select class="form-control" onchange="selectProduct(${i},this.value)" style="margin-bottom:4px">
+          <option value="">— Select Product —</option>
+          ${state.products.filter(p=>p.status!=='inactive').map(p=>`<option value="${p.id}" ${p.id==item.productId?'selected':''}>${p.name} (${cur}${(p.sale||p.price).toFixed(2)})</option>`).join('')}
+        </select>
+        ${item.name?`<div style="font-size:11px;color:var(--text3)">${item.name}</div>`:''}
+      </td>
+      <td style="padding:8px;text-align:center">
+        <input type="number" class="form-control" value="${item.qty}" min="1" style="text-align:center;width:60px" onchange="updateItem(${i},'qty',this.value)">
+      </td>
+      <td style="padding:8px">
+        <input type="number" class="form-control" value="${item.price}" min="0" step="0.01" style="text-align:right;width:90px" onchange="updateItem(${i},'price',this.value)">
+      </td>
+      <td style="padding:8px;text-align:right;font-weight:600">${cur}${(item.qty*item.price).toFixed(2)}</td>
+      <td style="padding:8px"><button class="btn btn-ghost btn-sm btn-icon" onclick="removeInvoiceItem(${i})" style="color:var(--danger)">✕</button></td>
+    </tr>`).join('');
+  calcTotals();
+}
+function selectProduct(i,productId){
+  const p=state.products.find(x=>x.id==productId);
+  if(p){ state.invoiceItems[i].productId=productId; state.invoiceItems[i].price=p.sale||p.price; state.invoiceItems[i].name=p.sku; }
+  else { state.invoiceItems[i].productId=''; state.invoiceItems[i].price=0; state.invoiceItems[i].name=''; }
+  renderInvoiceItems();
+}
+function updateItem(i,field,val){
+  state.invoiceItems[i][field]=field==='qty'?parseInt(val)||1:parseFloat(val)||0;
+  calcTotals();
+}
+function calcTotals(){
+  const sub=state.invoiceItems.reduce((s,it)=>s+(it.qty*it.price),0);
+  const disc=parseFloat(document.getElementById('inv-discount').value)||0;
+  const tax=parseFloat(document.getElementById('inv-tax').value)||0;
+  const discAmt=sub*disc/100;
+  const taxAmt=(sub-discAmt)*tax/100;
+  const total=sub-discAmt+taxAmt;
+  const cur=state.settings.currency;
+  document.getElementById('inv-subtotal').textContent=cur+sub.toFixed(2);
+  document.getElementById('inv-total').textContent=cur+total.toFixed(2);
+  // summary
+  const valid=state.invoiceItems.filter(it=>it.productId&&it.qty>0);
+  document.getElementById('sumItems').textContent=valid.length;
+  document.getElementById('sumSub').textContent=cur+sub.toFixed(2);
+  document.getElementById('sumTotal').textContent=cur+total.toFixed(2);
+  document.getElementById('invSummaryItems').innerHTML=valid.length?valid.map(it=>{
+    const p=state.products.find(x=>x.id==it.productId);
+    return `<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)"><span>${p?p.name:it.name} ×${it.qty}</span><span>${cur}${(it.qty*it.price).toFixed(2)}</span></div>`;
+  }).join(''):'<span>No items added yet.</span>';
+}
+function clearInvoice(){
+  state.invoiceItems=[{productId:'',qty:1,price:0,name:''}];
+  ['inv-customer','inv-email','inv-phone','inv-address','inv-notes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('inv-discount').value=0;
+  document.getElementById('inv-tax').value=state.settings.tax||0;
+  renderInvoiceItems();
+}
+function generateInvoice(){
+  const customer=document.getElementById('inv-customer').value.trim();
+  if(!customer){toast('Customer name required','danger');return;}
+  const valid=state.invoiceItems.filter(it=>it.productId&&it.qty>0);
+  if(!valid.length){toast('Add at least one product','danger');return;}
+
+  const sub=valid.reduce((s,it)=>s+(it.qty*it.price),0);
+  const disc=parseFloat(document.getElementById('inv-discount').value)||0;
+  const tax=parseFloat(document.getElementById('inv-tax').value)||0;
+  const discAmt=sub*disc/100;
+  const taxAmt=(sub-discAmt)*tax/100;
+  const total=sub-discAmt+taxAmt;
+
+  const order={
+    id: state.nextOrderId++,
+    date: document.getElementById('inv-date').value,
+    customer,
+    email: document.getElementById('inv-email').value,
+    phone: document.getElementById('inv-phone').value,
+    address: document.getElementById('inv-address').value,
+    items: valid.map(it=>({...it,productName:state.products.find(p=>p.id==it.productId)?.name||''})),
+    subtotal:sub, discount:disc, discountAmt:discAmt,
+    tax, taxAmt, total,
+    payment: document.getElementById('inv-payment').value,
+    status: document.getElementById('inv-status').value,
+    notes: document.getElementById('inv-notes').value,
+    createdAt: new Date().toLocaleDateString()
+  };
+  state.orders.push(order);
+  // deduct stock
+  valid.forEach(it=>{
+    const p=state.products.find(x=>x.id==it.productId);
+    if(p){ p.stock=Math.max(0,p.stock-it.qty); p.updatedAt=new Date().toLocaleDateString(); }
+  });
+  saveState();
+  toast('Invoice generated! #'+order.id,'success');
+  updateBadges();
+  showInvoicePrint(order.id);
+  clearInvoice();
+}
+function showInvoicePrint(orderId){
+  const o=state.orders.find(x=>x.id==orderId);
+  if(!o)return;
+  const s=state.settings;
+  const cur=s.currency;
+  const invNo='INV-'+String(o.id).padStart(5,'0');
+  const html=`<div class="invoice-preview">
+    <div class="inv-header">
+      <div><div class="inv-logo">${s.storeName||'ShopManager Pro'}</div>
+        <div style="font-size:13px;color:#666;margin-top:6px;line-height:1.6">${s.address||''}<br>${s.email||''}<br>${s.phone||''}</div>
+      </div>
+      <div class="inv-title"><h2>INVOICE</h2><p>${invNo}</p></div>
+    </div>
+    <div class="inv-parties">
+      <div class="inv-party"><h4>Bill To</h4>
+        <p><strong>${o.customer}</strong><br>${o.email||''}<br>${o.phone||''}<br>${o.address||''}</p>
+      </div>
+      <div class="inv-party"><h4>Invoice Details</h4>
+        <p>Invoice #: <strong>${invNo}</strong><br>Date: <strong>${o.date}</strong><br>Payment: <strong>${o.payment}</strong><br>Status: <strong>${o.status}</strong></p>
+      </div>
+    </div>
+    <div class="inv-meta">
+      <div class="inv-meta-item"><label>Invoice #</label><p>${invNo}</p></div>
+      <div class="inv-meta-item"><label>Date</label><p>${o.date}</p></div>
+      <div class="inv-meta-item"><label>Status</label><p>${o.status}</p></div>
+    </div>
+    <table class="inv-table">
+      <thead><tr><th>#</th><th>Product</th><th>Unit Price</th><th>Qty</th><th>Total</th></tr></thead>
+      <tbody>${o.items.map((it,i)=>`<tr><td>${i+1}</td><td>${it.productName}</td><td>${cur}${it.price.toFixed(2)}</td><td>${it.qty}</td><td>${cur}${(it.qty*it.price).toFixed(2)}</td></tr>`).join('')}</tbody>
+    </table>
+    <div class="inv-totals">
+      <div class="inv-totals-box">
+        <div class="inv-total-row"><span>Subtotal</span><span>${cur}${o.subtotal.toFixed(2)}</span></div>
+        ${o.discount>0?`<div class="inv-total-row"><span>Discount (${o.discount}%)</span><span>-${cur}${o.discountAmt.toFixed(2)}</span></div>`:''}
+        ${o.tax>0?`<div class="inv-total-row"><span>Tax (${o.tax}%)</span><span>${cur}${o.taxAmt.toFixed(2)}</span></div>`:''}
+        <div class="inv-total-row grand"><span>TOTAL</span><span>${cur}${o.total.toFixed(2)}</span></div>
+      </div>
+    </div>
+    ${o.notes?`<div style="margin-top:20px;padding:14px;background:#f8f8ff;border-radius:8px"><strong>Notes:</strong> ${o.notes}</div>`:''}
+    <div class="inv-barcode">
+      <svg id="barcodesvg"></svg>
+      <p>Invoice Reference: ${invNo}</p>
+    </div>
+    <div class="inv-footer">${s.footer||'Thank you for your business!'}<br><span style="font-size:10px">${s.storeName} • ${s.email} • ${s.phone}</span></div>
+  </div>`;
+  document.getElementById('invoicePrintContent').innerHTML=html;
+  openModal('invoicePrintModal');
+  setTimeout(()=>{
+    try{
+      JsBarcode("#barcodesvg", invNo, {format:"CODE128",width:2,height:60,displayValue:true,background:"#fff",lineColor:"#111",fontSize:14});
+    }catch(e){}
+  },100);
+}
+
+// ========== ORDERS ==========
+function renderOrders(){
+  const statusF=document.getElementById('orderStatusFilter').value;
+  let orders=[...state.orders].reverse();
+  if(statusF) orders=orders.filter(o=>o.status===statusF);
+  const tbody=document.getElementById('orderTable');
+  const cur=state.settings.currency;
+  if(!orders.length){ tbody.innerHTML=`<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text3)">No orders yet.</td></tr>`; return; }
+  const statusBadge={Pending:'badge-warning',Processing:'badge-info',Completed:'badge-success',Cancelled:'badge-danger'};
+  tbody.innerHTML=orders.map(o=>`<tr>
+    <td><strong style="color:var(--accent)">#${String(o.id).padStart(5,'0')}</strong></td>
+    <td>${o.date}</td>
+    <td><strong>${o.customer}</strong><br><span class="text-muted" style="font-size:12px">${o.email||''}</span></td>
+    <td>${o.items.length} item${o.items.length!==1?'s':''}</td>
+    <td><strong>${cur}${o.total.toFixed(2)}</strong></td>
+    <td><span class="badge ${statusBadge[o.status]||'badge-gray'}">${o.status}</span></td>
+    <td><div class="flex" style="gap:6px">
+      <button class="btn btn-ghost btn-sm" onclick="showInvoicePrint(${o.id})">🖨️ Print</button>
+      <select class="form-control" style="font-size:12px;padding:4px 8px" onchange="updateOrderStatus(${o.id},this.value)">
+        <option value="">Status</option>
+        <option value="Pending">Pending</option><option value="Processing">Processing</option>
+        <option value="Completed">Completed</option><option value="Cancelled">Cancelled</option>
+      </select>
+    </div></td>
+  </tr>`).join('');
+}
+function updateOrderStatus(id,status){
+  if(!status)return;
+  const o=state.orders.find(x=>x.id==id);
+  if(o){o.status=status; saveState(); renderOrders(); toast('Status updated'); }
+}
+
+// ========== INVENTORY ==========
+function renderInventory(){
+  const f=document.getElementById('invStockFilter').value;
+  let prods=[...state.products];
+  if(f==='instock') prods=prods.filter(p=>p.stock>p.minStock);
+  else if(f==='lowstock') prods=prods.filter(p=>p.stock>0&&p.stock<=p.minStock);
+  else if(f==='outofstock') prods=prods.filter(p=>p.stock<=0);
+  const tbody=document.getElementById('inventoryTable');
+  if(!prods.length){ tbody.innerHTML=`<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--text3)">No products.</td></tr>`; return; }
+  tbody.innerHTML=prods.map(p=>{
+    const pct=Math.min(100,Math.round(p.stock/Math.max(1,p.minStock*2)*100));
+    const fillColor=p.stock<=0?'var(--danger)':p.stock<=p.minStock?'var(--warning)':'var(--success)';
+    return `<tr>
+      <td><div class="product-info"><div class="product-thumb">${p.emoji||'📦'}</div><div class="product-name">${p.name}</div></div></td>
+      <td><code style="background:var(--surface2);padding:2px 8px;border-radius:4px;font-size:12px">${p.sku}</code></td>
+      <td><strong style="font-size:16px">${p.stock}</strong> <span class="text-muted">${p.unit||'pcs'}</span></td>
+      <td>${p.minStock||5}</td>
+      <td><div class="stock-bar"><div class="stock-fill" style="width:${pct}%;background:${fillColor}"></div></div></td>
+      <td>${p.updatedAt||'—'}</td>
+      <td><button class="btn btn-ghost btn-sm" onclick="openRestockSingle(${p.id})">+ Restock</button></td>
+    </tr>`;
+  }).join('');
+}
+function openRestockModal(){
+  const sel=document.getElementById('restock-product');
+  sel.innerHTML='<option value="">— Choose Product —</option>';
+  state.products.forEach(p=>{ sel.innerHTML+=`<option value="${p.id}">${p.name} (${p.stock} in stock)</option>`; });
+  const supSel=document.getElementById('restock-supplier');
+  supSel.innerHTML='<option value="">— None —</option>';
+  state.suppliers.forEach(s=>{ supSel.innerHTML+=`<option value="${s.id}">${s.name}</option>`; });
+  document.getElementById('restock-qty').value='';
+  document.getElementById('restock-note').value='';
+  document.getElementById('restock-current').style.display='none';
+  openModal('restockModal');
+}
+function openRestockSingle(productId){
+  openRestockModal();
+  document.getElementById('restock-product').value=productId;
+  showRestockCurrent();
+}
+function showRestockCurrent(){
+  const pid=document.getElementById('restock-product').value;
+  const el=document.getElementById('restock-current');
+  if(pid){ const p=state.products.find(x=>x.id==pid); if(p){ document.getElementById('restock-cur-val').textContent=p.stock+' '+( p.unit||'pcs'); el.style.display='block'; } }
+  else { el.style.display='none'; }
+}
+function doRestock(){
+  const pid=document.getElementById('restock-product').value;
+  const qty=parseInt(document.getElementById('restock-qty').value)||0;
+  if(!pid){toast('Select a product','danger');return;}
+  if(qty<=0){toast('Enter quantity > 0','danger');return;}
+  const p=state.products.find(x=>x.id==pid);
+  if(p){ p.stock+=qty; p.updatedAt=new Date().toLocaleDateString(); saveState(); renderInventory(); closeModal('restockModal'); toast(`Added ${qty} units to ${p.name}`,'success'); updateBadges(); }
+}
+
+// ========== SUPPLIERS ==========
+function openSupplierModal(id=null){
+  document.getElementById('supModalTitle').textContent=id?'Edit Supplier':'Add Supplier';
+  document.getElementById('supId').value=id||'';
+  if(id){ const s=state.suppliers.find(x=>x.id==id); if(s){ document.getElementById('sup-name').value=s.name; document.getElementById('sup-contact').value=s.contact||''; document.getElementById('sup-email').value=s.email||''; document.getElementById('sup-phone').value=s.phone||''; document.getElementById('sup-address').value=s.address||''; } }
+  else { ['sup-name','sup-contact','sup-email','sup-phone','sup-address'].forEach(id=>document.getElementById(id).value=''); }
+  openModal('supplierModal');
+}
+function saveSupplier(){
+  const name=document.getElementById('sup-name').value.trim();
+  if(!name){toast('Supplier name required','danger');return;}
+  const id=document.getElementById('supId').value;
+  const sup={id:id||(state.nextSupId++),name,contact:document.getElementById('sup-contact').value,email:document.getElementById('sup-email').value,phone:document.getElementById('sup-phone').value,address:document.getElementById('sup-address').value};
+  if(id){ const i=state.suppliers.findIndex(x=>x.id==id); if(i>-1)state.suppliers[i]=sup; toast('Supplier updated!'); }
+  else { state.suppliers.push(sup); toast('Supplier added!'); }
+  saveState(); closeModal('supplierModal'); renderSuppliers();
+}
+function deleteSupplier(id){ if(!confirm('Delete?'))return; state.suppliers=state.suppliers.filter(s=>s.id!=id); saveState(); renderSuppliers(); toast('Supplier deleted','warning'); }
+function renderSuppliers(){
+  const tbody=document.getElementById('supplierTable');
+  if(!state.suppliers.length){ tbody.innerHTML=`<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text3)">No suppliers added yet.</td></tr>`; return; }
+  tbody.innerHTML=state.suppliers.map(s=>`<tr>
+    <td><strong>${s.name}</strong></td>
+    <td>${s.contact||'—'}</td>
+    <td>${s.email||'—'}</td>
+    <td>${s.phone||'—'}</td>
+    <td>${state.products.filter(p=>p.supplierId==s.id).length}</td>
+    <td><div class="flex" style="gap:6px"><button class="btn btn-ghost btn-sm btn-icon" onclick="openSupplierModal(${s.id})">✏️</button><button class="btn btn-ghost btn-sm btn-icon" onclick="deleteSupplier(${s.id})">🗑️</button></div></td>
+  </tr>`).join('');
+}
+
+// ========== DASHBOARD ==========
+function renderDashboard(){
+  const cur=state.settings.currency;
+  document.getElementById('stat-products').textContent=state.products.length;
+  const rev=state.orders.reduce((s,o)=>s+o.total,0);
+  document.getElementById('stat-revenue').textContent=cur+rev.toFixed(2);
+  document.getElementById('stat-orders').textContent=state.orders.length;
+  const low=state.products.filter(p=>p.stock<=p.minStock).length;
+  document.getElementById('stat-lowstock').textContent=low;
+  // recent orders
+  const recent=state.orders.slice(-5).reverse();
+  const ro=document.getElementById('dashRecentOrders');
+  const statusBadge={Pending:'badge-warning',Processing:'badge-info',Completed:'badge-success',Cancelled:'badge-danger'};
+  ro.innerHTML=recent.length?recent.map(o=>`<tr><td><strong style="color:var(--accent)">#${String(o.id).padStart(5,'0')}</strong></td><td>${o.customer}</td><td>${cur}${o.total.toFixed(2)}</td><td><span class="badge ${statusBadge[o.status]||'badge-gray'}">${o.status}</span></td></tr>`).join(''):`<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--text3)">No orders yet</td></tr>`;
+  // low stock
+  const lowProds=state.products.filter(p=>p.stock<=p.minStock).slice(0,5);
+  const ls=document.getElementById('dashLowStock');
+  ls.innerHTML=lowProds.length?lowProds.map(p=>`<tr><td>${p.emoji||'📦'} ${p.name}</td><td>${p.sku}</td><td style="color:${p.stock<=0?'var(--danger)':'var(--warning)'}">${p.stock}</td><td>${p.minStock||5}</td></tr>`).join(''):`<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--text3)">All stocked up!</td></tr>`;
+}
+
+// ========== REPORTS ==========
+function renderReports(){
+  const cur=state.settings.currency;
+  const now=new Date();
+  const monthOrders=state.orders.filter(o=>{const d=new Date(o.date);return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();});
+  const monthRev=monthOrders.reduce((s,o)=>s+o.total,0);
+  document.getElementById('rpt-monthly').textContent=cur+monthRev.toFixed(2);
+  document.getElementById('rpt-monthly-orders').textContent=monthOrders.length+' orders';
+  const avg=state.orders.length?state.orders.reduce((s,o)=>s+o.total,0)/state.orders.length:0;
+  document.getElementById('rpt-avg').textContent=cur+avg.toFixed(2);
+  const invVal=state.products.reduce((s,p)=>s+p.stock*(p.price||0),0);
+  document.getElementById('rpt-invvalue').textContent=cur+invVal.toFixed(2);
+  // sales by product
+  const prodSales={};
+  state.orders.forEach(o=>o.items.forEach(it=>{
+    if(!prodSales[it.productId]) prodSales[it.productId]={units:0,revenue:0};
+    prodSales[it.productId].units+=it.qty;
+    prodSales[it.productId].revenue+=it.qty*it.price;
+  }));
+  const totalRev=Object.values(prodSales).reduce((s,v)=>s+v.revenue,0);
+  const sorted=Object.entries(prodSales).sort((a,b)=>b[1].revenue-a[1].revenue);
+  if(sorted.length) document.getElementById('rpt-top').textContent=state.products.find(p=>p.id==sorted[0][0])?.name||'—';
+  const tbody=document.getElementById('salesByProduct');
+  tbody.innerHTML=sorted.length?sorted.map(([pid,v])=>{
+    const p=state.products.find(x=>x.id==pid);
+    const pct=totalRev>0?Math.round(v.revenue/totalRev*100):0;
+    return `<tr><td>${p?p.name:'Deleted Product'}</td><td>${v.units}</td><td>${cur}${v.revenue.toFixed(2)}</td><td><div style="display:flex;align-items:center;gap:8px"><div style="background:var(--surface3);border-radius:20px;height:6px;width:100px;overflow:hidden"><div style="width:${pct}%;height:100%;background:var(--accent);border-radius:20px"></div></div><span>${pct}%</span></div></td></tr>`;
+  }).join(''):`<tr><td colspan="4" style="text-align:center;padding:40px;color:var(--text3)">No sales data yet.</td></tr>`;
+}
+
+// ========== SETTINGS ==========
+function loadSettings(){
+  const s=state.settings;
+  document.getElementById('set-storename').value=s.storeName||'';
+  document.getElementById('set-currency').value=s.currency||'$';
+  document.getElementById('set-email').value=s.email||'';
+  document.getElementById('set-phone').value=s.phone||'';
+  document.getElementById('set-address').value=s.address||'';
+  document.getElementById('set-footer').value=s.footer||'';
+  document.getElementById('set-tax').value=s.tax||0;
+  document.getElementById('set-lowstock').value=s.lowstock||5;
+}
+function saveSettings(){
+  state.settings={
+    storeName:document.getElementById('set-storename').value,
+    currency:document.getElementById('set-currency').value||'$',
+    email:document.getElementById('set-email').value,
+    phone:document.getElementById('set-phone').value,
+    address:document.getElementById('set-address').value,
+    footer:document.getElementById('set-footer').value,
+    tax:parseFloat(document.getElementById('set-tax').value)||0,
+    lowstock:parseInt(document.getElementById('set-lowstock').value)||5
+  };
+  saveState();
+  document.getElementById('settings-msg').innerHTML='<div class="alert alert-success">✅ Settings saved successfully!</div>';
+  setTimeout(()=>document.getElementById('settings-msg').innerHTML='',3000);
+}
+
+// ========== UTILS ==========
+function updateBadges(){
+  document.getElementById('productCount').textContent=state.products.length;
+  document.getElementById('orderCount').textContent=state.orders.length;
+}
+function quickAdd(){ navigate('products'); setTimeout(openProductModal,100); }
+function globalSearchFn(){
+  const page=document.querySelector('.page.active');
+  if(page&&page.id==='page-products') renderProducts();
+}
+
+// ========== SEED DATA ==========
+function seedData(){
+  if(state.products.length) return;
+  state.categories=[
+    {id:1,name:'Electronics',desc:'Electronic items',color:'#7c5cfc'},
+    {id:2,name:'Clothing',desc:'Apparel & fashion',color:'#fc5c7d'},
+    {id:3,name:'Food & Drinks',desc:'Consumables',color:'#5cf9c8'}
+  ];
+  state.nextCatId=4;
+  state.products=[
+    {id:1,name:'Wireless Headphones',sku:'ELEC-001',catId:1,emoji:'🎧',price:79.99,cost:35,sale:0,stock:25,minStock:5,desc:'Premium wireless headphones',unit:'pcs',status:'active',updatedAt:new Date().toLocaleDateString()},
+    {id:2,name:'Smart Watch',sku:'ELEC-002',catId:1,emoji:'⌚',price:199.99,cost:90,sale:179.99,stock:12,minStock:5,desc:'Fitness tracking smartwatch',unit:'pcs',status:'active',updatedAt:new Date().toLocaleDateString()},
+    {id:3,name:'USB-C Cable',sku:'ELEC-003',catId:1,emoji:'🔌',price:12.99,cost:3,sale:0,stock:4,minStock:10,desc:'2m braided USB-C cable',unit:'pcs',status:'active',updatedAt:new Date().toLocaleDateString()},
+    {id:4,name:'Cotton T-Shirt',sku:'CLO-001',catId:2,emoji:'👕',price:24.99,cost:8,sale:0,stock:50,minStock:10,desc:'100% cotton unisex tee',unit:'pcs',status:'active',updatedAt:new Date().toLocaleDateString()},
+    {id:5,name:'Running Shoes',sku:'CLO-002',catId:2,emoji:'👟',price:89.99,cost:40,sale:74.99,stock:0,minStock:5,desc:'Lightweight running shoes',unit:'pcs',status:'active',updatedAt:new Date().toLocaleDateString()},
+    {id:6,name:'Organic Coffee',sku:'FD-001',catId:3,emoji:'☕',price:18.99,cost:7,sale:0,stock:30,minStock:10,desc:'500g premium arabica beans',unit:'pack',status:'active',updatedAt:new Date().toLocaleDateString()}
+  ];
+  state.nextProductId=7;
+  state.suppliers=[{id:1,name:'TechSupply Co.',contact:'John Smith',email:'john@techsupply.com',phone:'+1 555-0101',address:'100 Tech Ave, Silicon Valley'}];
+  state.nextSupId=2;
+  saveState();
+}
+
+// ========== INIT ==========
+loadState();
+seedData();
+updateBadges();
+renderDashboard();
+// set today date in invoice
+document.getElementById('inv-date').value=new Date().toISOString().split('T')[0];
+</script>
+</body>
+</html>
